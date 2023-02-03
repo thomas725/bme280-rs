@@ -3,10 +3,10 @@
 #[cfg(feature = "async")]
 use core::future::Future;
 #[cfg(feature = "sync")]
-use embedded_hal::delay::blocking::DelayUs;
-#[cfg(feature = "sync")]
-use embedded_hal::i2c::blocking::I2c;
+use embedded_hal::delay::DelayUs;
 use embedded_hal::i2c::ErrorType;
+#[cfg(feature = "sync")]
+use embedded_hal::i2c::I2c;
 #[cfg(feature = "async")]
 use embedded_hal_async::delay::DelayUs as AsyncDelayUs;
 #[cfg(feature = "async")]
