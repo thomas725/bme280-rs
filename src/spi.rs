@@ -5,7 +5,7 @@ use core::future::Future;
 #[cfg(feature = "sync")]
 use embedded_hal::delay::DelayUs;
 #[cfg(feature = "sync")]
-use embedded_hal::spi::{SpiBus, SpiDevice};
+use embedded_hal::spi::SpiDevice;
 #[cfg(feature = "async")]
 use embedded_hal_async::delay::DelayUs as AsyncDelayUs;
 #[cfg(feature = "async")]
@@ -54,7 +54,6 @@ pub struct AsyncBME280<SPI> {
 impl<SPI, SPIE> AsyncBME280<SPI>
 where
     SPI: AsyncSpiDevice<Error = SPIE>,
-    SPI::Bus: AsyncSpiBus<u8>,
 {
     /// Create a new BME280 struct
     pub fn new(spi: SPI) -> Result<Self, Error<SPIError<SPIE>>> {
@@ -118,7 +117,6 @@ struct AsyncSPIInterface<SPI> {
 impl<SPI> Interface for SPIInterface<SPI>
 where
     SPI: SpiDevice,
-    SPI::Bus: SpiBus<u8>,
 {
     type Error = SPIError<SPI::Error>;
 
@@ -248,7 +246,6 @@ where
 impl<SPI> AsyncSPIInterface<SPI>
 where
     SPI: AsyncSpiDevice,
-    SPI::Bus: AsyncSpiBus<u8>,
 {
     async fn read_any_register(
         &mut self,
