@@ -68,12 +68,15 @@
 //! println!("Pressure = {} pascals", measurements.pressure);
 //! ```
 
+extern crate alloc;
 pub mod i2c;
 pub mod spi;
+
 
 #[cfg(feature = "async")]
 use core::future::Future;
 use core::marker::PhantomData;
+use alloc::string::String;
 #[cfg(feature = "sync")]
 use embedded_hal::delay::DelayUs;
 #[cfg(feature = "async")]
@@ -690,6 +693,28 @@ where
         self.forced(delay).await?;
         delay.delay_ms(40).await; //.map_err(|_| Error::Delay)?; // await measurement
         let measurements = self.interface.read_data(BME280_DATA_ADDR).await?;
+        match self.calibration.as_mut() {
+            Some(calibration) => {
+                let measurements = Measurements::parse(measurements, &mut *calibration)?;
+                Ok(measurements)
+            }
+            None => Err(Error::NoCalibrationData),
+        }
+    }
+
+    /// Captures and processes sensor data for temperature, pressure, and humidity
+    async fn measure_debug<D: AsyncDelayUs>(
+        &mut self,
+        delay: &mut D,
+        tx: &crossbeam_channel::Sender<String>,
+    ) -> Result<Measurements<I::Error>, Error<I::Error>> {
+        tx.send("bme280.measure_debug started".into()).ok();
+        self.forced(delay).await?;
+        tx.send("bme280.measure_debug forced.await done".into()).ok();
+        delay.delay_ms(40).await; //.map_err(|_| Error::Delay)?; // await measurement
+        tx.send("bme280.measure_debug delay_ms(40).await done".into()).ok();
+        let measurements = self.interface.read_data(BME280_DATA_ADDR).await?;
+        tx.send("bme280.measure_debug read_data.await done".into()).ok();
         match self.calibration.as_mut() {
             Some(calibration) => {
                 let measurements = Measurements::parse(measurements, &mut *calibration)?;

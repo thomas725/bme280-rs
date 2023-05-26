@@ -1,5 +1,6 @@
 //! BME280 driver for sensors attached via I2C.
 
+use alloc::string::String;
 #[cfg(feature = "async")]
 use core::future::Future;
 #[cfg(feature = "sync")]
@@ -105,6 +106,15 @@ where
         delay: &mut D,
     ) -> Result<Measurements<I2C::Error>, Error<I2C::Error>> {
         self.common.measure(delay).await
+    }
+
+    /// Captures and processes sensor data for temperature, pressure, and humidity
+    pub async fn measure_debug<D: AsyncDelayUs>(
+        &mut self,
+        delay: &mut D,
+        tx: &crossbeam_channel::Sender<String>,
+    ) -> Result<Measurements<I2C::Error>, Error<I2C::Error>> {
+        self.common.measure_debug(delay, tx).await
     }
 }
 

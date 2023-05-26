@@ -20,6 +20,9 @@ derive_more = { version = "0.99.17", optional = true}
 embedded-hal-async = { version = "0.2.0-alpha.1", optional = true }
 maybe-async-cfg = "0.2.3"
 
+# debugging intermittent i2c freeze issue @ https://gitlab.com/thomas351/esp32-rust-playground 
+crossbeam-channel = "0.5.6"
+
 [dev-dependencies]
 cortex-m-rtic = "1.0.0"
 cortex-m = "0.7.3"
