@@ -708,13 +708,13 @@ where
         delay: &mut D,
         tx: &crossbeam_channel::Sender<String>,
     ) -> Result<Measurements<I::Error>, Error<I::Error>> {
-        tx.send("bme280.measure_debug started".into()).ok();
+        tx.send("ESP32 bme280_debugger started".into()).ok();
         self.forced(delay).await?;
-        tx.send("bme280.measure_debug forced.await done".into()).ok();
+        tx.send("ESP32 bme280_debugger forced.await done".into()).ok();
         delay.delay_ms(40).await; //.map_err(|_| Error::Delay)?; // await measurement
-        tx.send("bme280.measure_debug delay_ms(40).await done".into()).ok();
+        tx.send("ESP32 bme280_debugger delay_ms(40).await done".into()).ok();
         let measurements = self.interface.read_data(BME280_DATA_ADDR).await?;
-        tx.send("bme280.measure_debug read_data.await done".into()).ok();
+        tx.send("ESP32 bme280_debugger read_data.await done".into()).ok();
         match self.calibration.as_mut() {
             Some(calibration) => {
                 let measurements = Measurements::parse(measurements, &mut *calibration)?;
